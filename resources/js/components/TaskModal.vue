@@ -21,7 +21,6 @@
             <textarea
               v-model="form.description"
               class="w-full border border-gray-300 rounded px-3 py-2"
-              required
             ></textarea>
           </div>
 
@@ -41,6 +40,20 @@
   </option>
 </select></div>
   
+
+<div class="mb-4">
+
+<label class="block mb-2 font-semibold text-gray-700">Deadline:</label>
+    <input
+      type="date"
+      v-model="form.deadline"
+      class="border rounded px-3 py-2"
+    />
+</div>
+
+
+
+
           <div class="flex justify-end gap-2">
             <button
               type="button"
@@ -64,7 +77,8 @@
   <script setup>
   import { reactive, watch, defineEmits, defineProps } from 'vue'
   import axios from 'axios'
-  axios.defaults.withCredentials = true
+  import { usePage } from '@inertiajs/vue3'
+  const  user  = usePage()
 
 
   const statusOptions = [
@@ -78,7 +92,8 @@
     default: () => ({
       title: '',
       description: '',
-      status: ''
+      status: '',
+      deadline: ''
     })
   },
   visible: Boolean
@@ -90,7 +105,8 @@
   const form = reactive({
     title: '',
     description: '',
-    status: 1
+    status: 1,
+    deadline: ''
   })
 
 
@@ -98,9 +114,10 @@
 watch(
   () => props.task,
   (newTask) => {
-    form.title = newTask?.title || ''
-    form.description = newTask?.description || ''
+    form.title = newTask?.title || ""
+    form.description = newTask?.description || ""
     form.status = newTask?.status || 1
+    form.deadline = newTask?.deadline.split('T')[0] || ""
   },
   { immediate: true }
 )
@@ -110,6 +127,7 @@ watch(
     form.title = ''
     form.description = ''
     form.status = 1
+    form.deadline = ''
     props.task = null
     // props.task = ref(null)
   }
@@ -121,9 +139,11 @@ watch(
     // if (props.task===null)
     if (props.task.status==='')
       // if (props.task!=null)
-      response = await axios.post('/api/tasks', { ...form })
+      // response = await axios.post('/api/tasks', { ...form })
+      response = await axios.post('/api/tasks/', { user_id: user.props.auth.user.id, ...form })
     else
-      response = await axios.patch('/api/tasks/'+props.task.id, { id: props.task.id, ...form })
+    // response = await axios.patch('/api/tasks/'+props.task.id, { id: props.task.id, ...form })
+    response = await axios.patch('/api/tasks/'+props.task.id, { id: props.task.id, ...form , user_id: user.props.auth.user.id})
     emit('task-added', response.data)
       close()
     } catch (error) {

@@ -15,11 +15,11 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="task in tasks" :key="task.id" class="hover:bg-gray-50 taskRow">
+          <tr v-for="task in tasks" :key="task.id" class="hover:bg-gray-50 taskRow {{ statuses[(task.status - 1)] }}">
             <td class="rowId border px-4 py-2">{{ task.id }}</td>
             <td class="rowTitle border px-4 py-2">{{ task.title }}</td>
             <td class="rowDesc border px-4 py-2">{{ task.description }}</td>
-            <td class="rowStatus border px-4 py-2">{{ task.status }}</td>
+            <td class="rowStatus border px-4 py-2">{{ statuses[(task.status - 1)] }}</td>
             <td class="rowDeadline border px-4 py-2">{{ task.deadline }}</td>
             <td class="rowActions border px-4 py-2 text-center space-x-2">
               <span  @click="openModal(task)"  title="Edit" class="cursor-pointer">✏️</span>
@@ -29,7 +29,7 @@
         </tbody>
       </table>
   
-      <button  @click="openModal({ title: '', content: '', status: '' })" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+      <button  @click="openModal({ title: '', content: '', status: '', deadline: '' })" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
         ➕ Add Task
       </button>
     
@@ -37,7 +37,7 @@
       <TaskModal
       :task="editingTask"
       :visible="showModal"
-      @close="showModal = false"
+      @close="fetchTasks"
       @task-added="onTaskAdded"
     />
     
@@ -47,15 +47,20 @@
   </template>
   
   <script setup>
-  import { ref, onMounted } from 'vue'
+  import { ref, onMounted, defineProps, watch } from 'vue'
   import axios from 'axios'
   import TaskModal from './TaskModal.vue'
   import Quote from './Quote.vue'
+  const props = defineProps({
+  status: 0,})
+
+
+  const statuses = ['Pending', 'In-Progress', 'Completed']
 
   axios.defaults.withCredentials = true
 
   const tasks = ref([])
-  const showModal = ref(false)
+  let showModal = ref(false)
   const editingTask = ref(null)
 
 
@@ -67,6 +72,7 @@
   const fetchTasks = async () => {
     try {
     // return;
+    showModal = ref(false);
       const response = await axios.get('/api/tasks') // Adjust URL as needed
       tasks.value = response.data
     } catch (error) {
@@ -74,6 +80,18 @@
     }
   }
   
+
+  const fetchTasksByStatus = async () => {
+    try {
+    // return;
+      const response = await axios.get('/api/tasks-by-status/'+props.status) // Adjust URL as needed
+      tasks.value = response.data
+    } catch (error) {
+      console.error('Error fetching tasks:', error)
+    }
+  }
+
+
   const addTask = () => {
     alert('Add functionality goes here')
   }
@@ -92,6 +110,18 @@
       }
     }
   }
+
+  watch(
+  () => props.status,
+  () => {
+    if(props.status>0)
+    fetchTasksByStatus()
+    else
+    fetchTasks()
+  },
+  { immediate: true }
+)
+
   
   onMounted(() => {
     fetchTasks()
@@ -142,5 +172,10 @@ td
   padding: 5px;
   text-align: center;
 }
+
+/*.In-Progress
+{
+  background-color: ;
+}*/
 
   </style>
