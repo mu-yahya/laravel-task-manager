@@ -21,7 +21,7 @@
             <td class="rowTitle border px-4 py-2">{{ task.title }}</td>
             <td class="rowDesc border px-4 py-2">{{ task.description }}</td>
             <td class="rowStatus border px-4 py-2">{{ statuses[(task.status - 1)] }}</td>
-            <td class="rowDeadline border px-4 py-2">{{ task.deadline }}</td>
+            <td class="rowDeadline border px-4 py-2">{{ ddmmyyyyPipe(task.deadline) }}</td>
             <td class="rowActions border px-4 py-2 text-center space-x-2">
               <span  @click="openModal(task)"  title="Edit" class="cursor-pointer">✏️</span>
               <span @click="deleteTask(task.id)" title="Delete" class="cursor-pointer">🗑️</span>
@@ -34,7 +34,7 @@
         ➕ Add Task
       </button>
       <div class="pager" id="pager">
-<button  class="pageButton" v-if="currentPage > 0" @click="prevPage" >Previous</button>
+<button  class="pageButton nonNumber" v-if="currentPage > 0" @click="prevPage" ><</button>
         <!-- <span v-for="pageNum in limitedTasks" class="pageNumber sel">{{ pageNum }}</span> -->
         <!---<span
         v-for="page in totalPages"
@@ -48,7 +48,7 @@
       <span
         v-for="page in totalPages"
         :key="page"
-        :class="['pageNumber',{ sel: page === currentPage+1 }]"
+        :class="['pageNumber', 'pageButton',{ sel: page === currentPage+1 }]"
         :disabled = "page === currentPage+1"
         @click="goToPage(page-1)">
         {{ page }}
@@ -63,7 +63,7 @@
         @click="goToPage(page)">
         {{ page }}
       </span>-->
-      <button class="pageButton"  v-if="currentPage + 1 < totalPages" @click="nextPage" >Next</button>
+      <button class="pageButton nonNumber"  v-if="currentPage + 1 < totalPages" @click="nextPage" >></button>
       </div>
 
     
@@ -102,6 +102,20 @@
   editingTask.value = task // Pass existing post
   showModal.value = true
   }
+
+  /*function ddmmyyyyPipe(date)
+  {
+    return date.split('-')[2].split('T')[0]+ '-' +date.split('-')[1]+ '-' + date.split('-')[0]
+  }*/
+
+  function ddmmyyyyPipe(date)
+  {
+    if (!date|| date.length<6 )
+    // if (date.length<6 || !date)
+      return ''
+    return date.split('-')[2].split('T')[0]+ '-' +date.split('-')[1]+ '-' + date.split('-')[0]
+  }
+
 
   const totalPages = computed(() =>
   Math.ceil(tasks.value.length / pageSize.value)

@@ -16,12 +16,14 @@
 .pageNumber.sel
 {
     cursor:inherit;
-    background-color: bisque;
+    background-color: darkslategray;
+    color: ghostwhite;
+    font-weight: bolder;
 }
 
-.pageNumber
+.pageButton
 {
-    border: 1px solid red;
+    border: 4px groove crimson;
     cursor: pointer;
     border-radius: 50%;
     width: 36px !important;
@@ -32,3 +34,4 @@
     align-content: space-evenly;
     margin: 1px;
 }
+
