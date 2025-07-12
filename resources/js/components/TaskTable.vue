@@ -15,8 +15,9 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="task in tasks" :key="task.id" class="hover:bg-gray-50 taskRow {{ statuses[(task.status - 1)] }}">
-            <td class="rowId border px-4 py-2">{{ task.id }}</td>
+          <tr v-for="task in limitedTasks" :key="task.id" class="hover:bg-gray-50 taskRow {{ statuses[(task.status - 1)] }}">
+            <!-- <tr v-for="task in tasks" :key="task.id" class="hover:bg-gray-50 taskRow {{ statuses[(task.status - 1)] }}"> -->
+              <td class="rowId border px-4 py-2">{{ task.id }}</td>
             <td class="rowTitle border px-4 py-2">{{ task.title }}</td>
             <td class="rowDesc border px-4 py-2">{{ task.description }}</td>
             <td class="rowStatus border px-4 py-2">{{ statuses[(task.status - 1)] }}</td>
@@ -33,9 +34,36 @@
         ➕ Add Task
       </button>
       <div class="pager" id="pager">
-        <span class="pageNumber sel">1</span>
-        <span class="pageNumber">2</span>
-        <span class="pageNumber">3</span>
+<button  class="pageButton" v-if="currentPage > 0" @click="prevPage" >Previous</button>
+        <!-- <span v-for="pageNum in limitedTasks" class="pageNumber sel">{{ pageNum }}</span> -->
+        <!---<span
+        v-for="page in totalPages"
+        :key="page"
+        :class="{ sel: page === currentPage, pageNumber }"
+        @click="goToPage(page)">
+        {{ page }}
+      </span>-->
+
+
+      <span
+        v-for="page in totalPages"
+        :key="page"
+        :class="['pageNumber',{ sel: page === currentPage+1 }]"
+        :disabled = "page === currentPage+1"
+        @click="goToPage(page-1)">
+        {{ page }}
+      </span>
+
+
+      <!-- <span 
+        v-for="page in totalPages"
+        :key="page"
+        :disable = "{page === currentPage+1}"
+        :class="{ sel: page === currentPage }, pageNumber"
+        @click="goToPage(page)">
+        {{ page }}
+      </span>-->
+      <button class="pageButton"  v-if="currentPage + 1 < totalPages" @click="nextPage" >Next</button>
       </div>
 
     
@@ -53,7 +81,7 @@
   </template>
   
   <script setup>
-  import { ref, onMounted, defineProps, watch } from 'vue'
+  import { ref, onMounted, defineProps, watch, computed } from 'vue'
   import axios from 'axios'
   import TaskModal from './TaskModal.vue'
   import Quote from './Quote.vue'
@@ -74,6 +102,10 @@
   editingTask.value = task // Pass existing post
   showModal.value = true
   }
+
+  const totalPages = computed(() =>
+  Math.ceil(tasks.value.length / pageSize.value)
+);
   
   const fetchTasks = async () => {
     try {
@@ -97,6 +129,28 @@
     }
   }
 
+
+  const currentPage = ref(0);
+  const pageSize = ref(5);
+
+
+  const limitedTasks = computed(() => {
+  const start = currentPage.value * pageSize.value;
+  return tasks.value.slice(start, start + pageSize.value);
+});
+
+function nextPage() {
+  currentPage.value++;
+}
+
+function prevPage() {
+  if (currentPage.value > 0) currentPage.value--;
+}
+
+
+function goToPage(page) {
+  currentPage.value = page;
+}
 
   const addTask = () => {
     alert('Add functionality goes here')
