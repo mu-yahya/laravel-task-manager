@@ -1,3 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+#pager
+{
+    display: inline-block;
+    /* display: block; */
+    align-self: center;
+    right:  50% !important;
+    /* left:  50% !important; */
+    position: absolute;
+}
+
+.pageNumber.sel
+{
+    cursor:inherit;
+    background-color: bisque;
+}
+
+.pageNumber
+{
+    border: 1px solid red;
+    cursor: pointer;
+    border-radius: 50%;
+    width: 36px !important;
+    height: 36px;
+    display: inline-block;
+    /* margin: auto; */
+    text-align: center;
+    align-content: space-evenly;
+    margin: 1px;
+}

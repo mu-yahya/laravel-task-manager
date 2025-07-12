@@ -3,6 +3,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Models\Task;
 
+
+Route::get('/quotes', function()  {
+
+    $quote = Http::withHeaders([
+        'X-Api-Key' => env('VITE_API_KEY')
+    ])->get('https://api.api-ninjas.com/v1/quotes');
+
+    // return response()->json(['quote' => $quote.quote, 'author' => $quote.author]);
+    return response()->json($quote->json());
+});
+
 Route::get('/tasks', fn() => Task::where('user_id',auth()->id())->get());
 Route::get('/tasks-by-status/{status}', fn($status) => Task::where('user_id',auth()->id())->where('status',intval($status))->get());
 Route::get('/users', fn() => User::all());

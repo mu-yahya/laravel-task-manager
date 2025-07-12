@@ -32,6 +32,12 @@
       <button  @click="openModal({ title: '', content: '', status: '', deadline: '' })" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
         ➕ Add Task
       </button>
+      <div class="pager" id="pager">
+        <span class="pageNumber sel">1</span>
+        <span class="pageNumber">2</span>
+        <span class="pageNumber">3</span>
+      </div>
+
     
     
       <TaskModal

@@ -19,11 +19,15 @@ return [
 
     'allowed_methods' => ['*'],
 
+    // 'allowed_origins' => ['*, http://localhost:5173', 'http://task-manager.test', 'https://api.api-ninjas.com'],
+    
+    // 'allowed_origins' => ['http://localhost:5173', 'http://task-manager.test', 'https://api.api-ninjas.com', '*'],
     'allowed_origins' => ['http://localhost:5173', 'http://task-manager.test'],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['*'],
+    // 'allowed_headers' => ['*, X-Api-Key'],
+    'allowed_headers' => [ '*'],
 
     'exposed_headers' => [],
 

@@ -4,9 +4,13 @@ import { Link } from '@inertiajs/vue3'
 import { ref } from 'vue'
 
 let selected = ref(null)
+// const selected = ref(null)
+const statuses = ['All', 'Pending', 'In-Progress', 'Completed']
+let selectedVal = 0;
 
 function setValue(val) {
   selected.value = val
+  selectedVal = val
   console.log('Selected:', val)
   // selectStatus
 }
@@ -55,7 +59,7 @@ function setValue(val) {
   </div>
 
   <p  class="mt-4 text-right text-gray-700">
-    Selected Value: <strong id="selectStatus">{{ selected }}</strong>
+    Showing <strong id="selectStatus">{{ statuses[selectedVal] }}</strong>
   </p>
       <!-- <p>This is a protected tasks page.</p> -->
     </div>

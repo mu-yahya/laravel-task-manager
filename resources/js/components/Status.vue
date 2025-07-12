@@ -2,9 +2,13 @@
 import { ref } from 'vue'
 
 const selected = ref(null)
+const statuses = ['All', 'Pending', 'In-Progress', 'Completed']
+let selectedVal = 0;
+
 
 function setValue(val) {
   selected.value = val
+  selectedVal = val
   console.log('Selected:', val)
 }
 </script>
@@ -34,6 +38,6 @@ function setValue(val) {
   </div>
 
   <p class="mt-4 text-right text-gray-700">
-    Selected Value: <strong>{{ selected }}</strong>
+    Showing <strong>{{ statuses[selectedVal] }}</strong>
   </p>
 </template>
