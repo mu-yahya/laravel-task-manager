@@ -35,3 +35,13 @@
     margin: 1px;
 }
 
+
+.asc
+{
+    background-color: lightgreen;
+}
+
+.desc
+{
+    background-color: lightcoral;
+}

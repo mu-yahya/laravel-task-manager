@@ -1,22 +1,27 @@
 <template>
     <div class="p-4">
-      <h2 class="text-xl font-bold mb-4">📋 Task List</h2>
+      <!-- <h2 class="text-xl font-bold mb-4">📋 Task List</h2> -->
       <Quote></Quote>
   
       <table id="tasksTable" class="w-full border border-collapse">
         <thead>
           <tr class="bg-gray-100">
-            <th class="headId border px-4 py-2">ID</th>
-            <th class="headTitle border px-4 py-2">Title</th>
-            <th class="headDesc border px-4 py-2">Description</th>
-            <th class="headStatus border px-4 py-2">Status</th>
-            <th class="headDeadline border px-4 py-2">Deadline</th>
+            <th class="headId border px-4 py-2">#</th>
+            <!-- <th  @click="sortKey = 'id', sortOrder=false" class="headId border px-4 py-2">ID</th> -->
+            <!-- <th  @click="sortKey = 'id', sortOrder=!sortOrder" class="headId border px-4 py-2">ID</th> -->
+            <!-- <th  @click="sortKey = 'id', !sortOrder" class="headId border px-4 py-2">ID</th> -->
+            <th  @click="sorter('id')" class="headId border px-4 py-2" :class="[{ asc: sortOrder === true && sortKey === 'id' }, { desc: sortOrder === false && sortKey === 'id' }]">ID <span v-if="sortKey !== 'id'">↕</span><span v-else-if="!sortOrder">↓</span><span v-else>↑</span></th>
+            <th  @click="sorter('title')" class="headTitle border px-4 py-2"  :class="[{ asc: sortOrder === true && sortKey === 'title' }, { desc: sortOrder === false && sortKey === 'title' }]">Title <span v-if="sortKey !== 'title'">↕</span><span v-else-if="!sortOrder">↓</span><span v-else>↑</span></th>
+            <th  class="headDesc border px-4 py-2">Description</th>
+            <th  @click="sorter('status')" class="headStatus border px-4 py-2" :class="[{ asc: sortOrder === true && sortKey === 'status' }, { desc: sortOrder === false && sortKey === 'status' }]">Status <span v-if="sortKey !== 'status'">↕</span><span v-else-if="!sortOrder">↓</span><span v-else>↑</span></th>
+            <th  @click="sorter('deadline')" class="headDeadline border px-4 py-2" :class="[{ asc: sortOrder === true && sortKey === 'deadline' }, { desc: sortOrder === false && sortKey === 'deadline' }]">Deadline <span v-if="sortKey !== 'deadline'">↕</span><span v-else-if="!sortOrder">↓</span><span v-else>↑</span></th>
             <th class="headActions border px-4 py-2">Actions</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="task in limitedTasks" :key="task.id" class="hover:bg-gray-50 taskRow {{ statuses[(task.status - 1)] }}">
+          <tr v-for="(task, index) in limitedTasks" :key="task.id" class="hover:bg-gray-50 taskRow {{ statuses[(task.status - 1)] }}">
             <!-- <tr v-for="task in tasks" :key="task.id" class="hover:bg-gray-50 taskRow {{ statuses[(task.status - 1)] }}"> -->
+              <td class="rowId border px-4 py-2">{{ (currentPage)*pageSize + index + 1 }}</td>
               <td class="rowId border px-4 py-2">{{ task.id }}</td>
             <td class="rowTitle border px-4 py-2">{{ task.title }}</td>
             <td class="rowDesc border px-4 py-2">{{ task.description }}</td>
@@ -134,6 +139,7 @@
   
 
   const fetchTasksByStatus = async () => {
+    console.log('loaded... fetching')
     try {
     // return;
       const response = await axios.get('/api/tasks-by-status/'+props.status) // Adjust URL as needed
@@ -148,10 +154,66 @@
   const pageSize = ref(5);
 
 
-  const limitedTasks = computed(() => {
+  const sortKey = ref('id'); // default sort key
+// const sortOrder = ref('asc'); // default order
+const sortOrder = ref(true); // default order, true for ascending
+// const watchKey = ref(sortKey)
+
+  /*const limitedTasks = computed(() => {
   const start = currentPage.value * pageSize.value;
   return tasks.value.slice(start, start + pageSize.value);
+});*/
+
+function sorter(key)
+{
+  if (sortKey.value === key)
+    sortOrder.value = !sortOrder.value
+  else
+    sortOrder.value = true
+  sortKey.value = key
+}
+
+const limitedTasks = computed(() => {
+  const sorted = tasks.value.slice().sort((a, b) => {
+    let aValue = a[sortKey.value];
+    let bValue = b[sortKey.value];
+
+    // If sorting by date, parse to Date
+    if (sortKey.value === 'created_at') {
+      aValue = new Date(aValue);
+      bValue = new Date(bValue);
+    }
+
+    let result = 0;
+
+    if (typeof aValue === 'string') {
+      result = aValue.localeCompare(bValue);
+    } else {
+      result = aValue - bValue;
+    }
+
+    // return sortOrder.value === 'asc' ? result : -result;
+    // return sortOrder.value === true ? result : -result;
+    // return sortOrder.value === sortOrder ? result : -result;
+    // return sortOrder ? result : -result;
+    // return !sortOrder ? result : -result;
+
+    // sortOrder = !sortOrder
+    // sortOrder.val = !sortOrder
+    // sortOrder.value = !sortOrder.value
+    // console.log(sortOrder)
+    // return sortOrder ? result : -result;
+    return sortOrder.value ? result : -result;
+
+
+  });
+  console.log(sortOrder)
+
+  const start = currentPage.value * pageSize.value;
+  return sorted.slice(start, start + pageSize.value);
 });
+
+
 
 function nextPage() {
   currentPage.value++;
