@@ -2,6 +2,7 @@
 import TaskTable from '@/Components/TaskTable.vue';
 import { Link } from '@inertiajs/vue3'
 import { ref } from 'vue'
+import Quote from '@/Components/Quote.vue'
 
 let selected = ref(null)
 // const selected = ref(null)
@@ -18,16 +19,20 @@ function setValue(val) {
 
 <template>
       <!-- Logout Button -->
-      <Link
+      <div id="tasksPageContent">
+        <Link
         href="/logout"
         method="post"
         as="button"
-        class="text-sm bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+        class="text-sm bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 logoutButton"
       >
         Logout
       </Link>
-          <div class="p-4">
+
       <h1 class="text-2xl font-bold">Tasks Page</h1>
+      <Quote></Quote>
+
+          <div class="p-4">
 
         <div class="flex justify-end space-x-2">
           <button
@@ -67,5 +72,5 @@ function setValue(val) {
     <TaskTable       :status="selected"
     />
 
-
+      </div>
   </template>

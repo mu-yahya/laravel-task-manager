@@ -110,4 +110,6 @@ const submit = () => {
             </div>
         </form>
     </GuestLayout>
+    <!-- <Link :href="route('register')" class="hover:text-black/70 credentialPageButton"> Login</Link> -->
+
 </template>

@@ -33,6 +33,8 @@ const submit = () => {
     <GuestLayout>
         <Head title="Log in" />
 
+
+
         <div v-if="status" class="mb-4 text-sm font-medium text-green-600">
             {{ status }}
         </div>
@@ -79,13 +81,21 @@ const submit = () => {
             </div>
 
             <div class="mt-4 flex items-center justify-end">
-                <Link
+<!--                <Link
                 v-if="canRegister"
                 :href="route('register')"
                     class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Register
+                </Link>-->
+
+                <Link
+                :href="route('register')"
+                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                    Register
                 </Link>
+
 
                 <PrimaryButton
                     class="ms-4"
@@ -96,5 +106,9 @@ const submit = () => {
                 </PrimaryButton>
             </div>
         </form>
+        
     </GuestLayout>
+    <!-- <Link :href="route('register')" class="hover:text-black/70 credentialPageButton"> Register</Link> -->
+    <!-- <Link v-if="canRegister" :href="route('register')" class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"> Register</Link> -->
+
 </template>

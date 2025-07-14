@@ -1,7 +1,6 @@
 <template>
     <div class="p-4">
       <!-- <h2 class="text-xl font-bold mb-4">📋 Task List</h2> -->
-      <Quote></Quote>
   
       <table id="tasksTable" class="w-full border border-collapse">
         <thead>
@@ -89,7 +88,6 @@
   import { ref, onMounted, defineProps, watch, computed } from 'vue'
   import axios from 'axios'
   import TaskModal from './TaskModal.vue'
-  import Quote from './Quote.vue'
   const props = defineProps({
   status: 0,})
 

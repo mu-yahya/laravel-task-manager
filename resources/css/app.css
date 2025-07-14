@@ -45,3 +45,15 @@
 {
     background-color: lightcoral;
 }
+
+.logoutButton
+{
+    position: absolute;
+    right: 0;
+}
+
+#tasksPageContent
+{
+    margin: 0;
+    padding: 2px;
+}
