@@ -231,12 +231,15 @@ async function exportToExcel() {
   const firstTask = tasks.value[0];
   console.log(firstTask)
   let headers = Object.keys(firstTask).map(key => ({
-    header: key.charAt(0).toUpperCase() + key.slice(1), // capitalize
+    /*header: key.charAt(0).toUpperCase() + key.slice(1), // capitalize
   key,
-  width: 20
+  width: 20*/
+
+  name: key.charAt(0).toUpperCase() + key.slice(1)
 }));
 console.log(headers)
-worksheet.columns = [  { header: '#', key: 'Sno', width: 10 }, ...headers]
+let sno = 0;
+/*worksheet.columns = [  { header: '#', key: 'Sno', width: 10 }, ...headers]
 let sno = 0;
 // Object.entries(tasks).forEach(task => {
 tasks.value.forEach(task => {
@@ -258,7 +261,51 @@ tasks.value.forEach(task => {
 
 worksheet.getRow(1).eachCell(cell => {
   cell.font = { bold: true, color: { argb: 'FF0000' } };
-});
+});*/
+
+
+worksheet.addTable({
+    name: 'TaskTable',
+    ref: 'A1',
+    headerRow: true,
+    style: {
+      theme: 'TableStyleMedium2',
+      showRowStripes: true
+    },
+    columns: [
+      { name: '#' },
+      ...headers
+    ],
+    // rows: tasks.map(task => [++sno, ...task])
+    // rows: tasks.value.map(task => [++sno, ...task])
+    // rows: tasks.value.map(task => [++sno, ...Object.values(task)])
+    /*rows: tasks.value.map(task => {
+      let row =[++sno]
+      //row.push(Object.keys(task).map(key => {
+        row.concat(Object.keys(task).map(key => {
+        if(key === 'status')
+          return row[key] = task[key]>2?"Completed":task[key]<2?"Pending":"In-Progress";
+        console.log(row[key])
+        // return row[key]
+        return task[key]
+      }))
+      console.log(row)
+      return row
+    })*/
+    rows: tasks.value.map(task => {
+      let row =[++sno]
+        row.push(...Object.keys(task).map(key => {
+        if(key === 'status')
+          return task[key]>2?"Completed":task[key]<2?"Pending":"In-Progress";
+        return task[key]
+      }))
+      return row
+    })
+  });
+
+
+
+
 
   // 2. Add column headers
   /*  worksheet.columns = [
