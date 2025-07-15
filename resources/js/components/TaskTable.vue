@@ -69,6 +69,7 @@
       </span>-->
       <button class="pageButton nonNumber"  v-if="currentPage + 1 < totalPages" @click="nextPage" >></button>
       </div>
+      <button class="exportExcel" @click="exportToExcel">Export to Excel</button>
 
     
     
@@ -88,6 +89,9 @@
   import { ref, onMounted, defineProps, watch, computed } from 'vue'
   import axios from 'axios'
   import TaskModal from './TaskModal.vue'
+  import ExcelJS from 'exceljs';
+
+
   const props = defineProps({
   status: 0,})
 
@@ -171,6 +175,11 @@ function sorter(key)
   sortKey.value = key
 }
 
+/*function rootSort(sorted)
+{
+  tasks.value = sorted
+}*/
+
 const limitedTasks = computed(() => {
   const sorted = tasks.value.slice().sort((a, b) => {
     let aValue = a[sortKey.value];
@@ -208,10 +217,78 @@ const limitedTasks = computed(() => {
   console.log(sortOrder)
 
   const start = currentPage.value * pageSize.value;
+  // tasks.value = sorted
+  // rootSort(sorted)
   return sorted.slice(start, start + pageSize.value);
 });
 
+async function exportToExcel() {
+  // 1. Create a new workbook
+  const workbook = new ExcelJS.Workbook();
+  const worksheet = workbook.addWorksheet('Tasks');
 
+
+  const firstTask = tasks.value[0];
+  console.log(firstTask)
+  let headers = Object.keys(firstTask).map(key => ({
+    header: key.charAt(0).toUpperCase() + key.slice(1), // capitalize
+  key,
+  width: 20
+}));
+console.log(headers)
+worksheet.columns = [  { header: '#', key: 'Sno', width: 10 }, ...headers]
+let sno = 0;
+// Object.entries(tasks).forEach(task => {
+tasks.value.forEach(task => {
+  // Pick only selected fields dynamically:
+  console.log("task:\n")
+  console.log(task)
+  // const row = {'Sno': ++sno};
+  const row = {};
+  row['Sno'] = ++sno
+  Object.keys(task).forEach(key => {
+    // firstTask.forEach(key => {
+    if  (key === 'status')
+      row[key] = task[key]>2?"Completed":task[key]<2?"Pending":"In-Progress";
+    else
+      row[key] = task[key];
+  });
+  worksheet.addRow(row);
+});
+
+worksheet.getRow(1).eachCell(cell => {
+  cell.font = { bold: true, color: { argb: 'FF0000' } };
+});
+
+  // 2. Add column headers
+  /*  worksheet.columns = [
+  { header: '#', key: 'id', width: 10 },
+  { header: 'ID', key: 'id', width: 10 },
+  { header: 'Title', key: 'title', width: 30 },
+  { header: 'Description', key: 'description', width: 50 },
+    { header: 'Status', key: 'status', width: 15 },
+  ];
+*/
+  // 3. Add rows
+  /*tasks.forEach(task => {
+    worksheet.addRow(task);
+  });*/
+
+  // 4. Create a Blob and trigger download
+  const buffer = await workbook.xlsx.writeBuffer();
+
+  const blob = new Blob([buffer], {
+    type:
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  });
+
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'tasks.xlsx';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
 
 function nextPage() {
   currentPage.value++;

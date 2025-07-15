@@ -57,3 +57,20 @@
     margin: 0;
     padding: 2px;
 }
+
+.exportExcel
+{
+    position: absolute;
+    right: 5px;
+    padding: 3px;
+    color: ghostwhite;
+    background-color: forestgreen;
+    border-radius: 3px;
+    /* font-weight: bold; */
+}
+
+.exportExcel:hover
+{
+    color: white;
+    font-weight: bolder;
+}
