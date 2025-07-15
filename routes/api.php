@@ -14,6 +14,34 @@ Route::get('/quotes', function()  {
     return response()->json($quote->json());
 });
 
+
+Route::get('/qr',  function()  {
+
+    $qr = Http::withHeaders([
+        'X-Api-Key' => env('VITE_API_KEY'),
+        'Accept' => 'image/png'
+        ])->get('https://api.api-ninjas.com/v1/qrcode?format=png&data=https://github.com/mu-yahya');
+        // ])->withOptions(['stream' => true])->get('https://api.api-ninjas.com/v1/qrcode?format=png&data=https://github.com/mu-yahya');
+
+    // return response()->json(['quote' => $quote.quote, 'author' => $quote.author]);
+    // return response();
+    // return response()->view();
+
+    /*$data = base64_decode($quote.data);
+    Storage::disk('public')->put('images/' . 'qr.png', $data);
+    return response()->json(['path' => 'images/' . $filename]);*/
+    /*echo $quote;
+    print($quote);*/
+    //echo $quote;
+    // Log::debug($quote); 
+    // return response()->json(['path' => $quote.data]);
+    // return response()->json(['path' => $quote]);
+    // return response($qr->getBody(), 200)->header('Content-Type', 'image/png');
+    return response(base64_encode($qr->getBody()), 200)->header('Content-Type', 'image/png');
+});
+
+
+
 Route::get('/tasks', fn() => Task::where('user_id',auth()->id())->get());
 Route::get('/tasks-by-status/{status}', fn($status) => Task::where('user_id',auth()->id())->where('status',intval($status))->get());
 Route::get('/users', fn() => User::all());

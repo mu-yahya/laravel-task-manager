@@ -3,6 +3,7 @@ import TaskTable from '@/Components/TaskTable.vue';
 import { Link } from '@inertiajs/vue3'
 import { ref } from 'vue'
 import Quote from '@/Components/Quote.vue'
+import QR from '@/components/QR.vue';
 
 let selected = ref(null)
 // const selected = ref(null)
@@ -71,6 +72,8 @@ function setValue(val) {
 
     <TaskTable       :status="selected"
     />
+
+    <QR id="qrSelf"></QR>
 
       </div>
   </template>
