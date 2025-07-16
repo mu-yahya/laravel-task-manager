@@ -70,8 +70,7 @@ function setValue(val) {
       <!-- <p>This is a protected tasks page.</p> -->
     </div>
 
-    <TaskTable       :status="selected"
-    />
+    <TaskTable       :status="selected"/>
 
     <QR id="qrSelf"></QR>
 
